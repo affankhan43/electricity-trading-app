@@ -39,13 +39,13 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
         end: Alignment.bottomCenter
       )
       ),
-      child: __isLoading ? Center(child: CircularProgressIndicator()) : 
-      ListView(
+      child: ListView(
         children: <Widget>[
-        headerSection(),
-        textSection(),
-        buttonSection()
-      ],
+          __isLoading? Center(child: CircularProgressIndicator()) : Center(),
+          headerSection(),
+          textSection(),
+          buttonSection()
+        ],
       ),
       ),
     );
