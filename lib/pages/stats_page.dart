@@ -12,27 +12,18 @@ class _MainPageState extends State<MainPage> {
   SharedPreferences sharedPreferences;
   String name = "";
 
-  @override
-  void initState() {
-    super.initState();
-    checkLoginStatus();
-  }
-
   checkLoginStatus() async {
     sharedPreferences = await SharedPreferences.getInstance();
     if(sharedPreferences.getString("token") == null) {
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => LoginPage()), (Route<dynamic> route) => false);
+      Navigator.of(context).pushReplacementNamed('/LoginScreen');
+    }else{
+      name = sharedPreferences.getString("token");
     }
-  }
-
-  getpref() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-    name = sharedPreferences.getString('name');
   }
 
   @override
   Widget build(BuildContext context){
-    getpref();
+    checkLoginStatus();
     return Scaffold(
       appBar: AppBar(
         title: Text("Code Land", style: TextStyle(color: Colors.white)),

@@ -13,13 +13,23 @@ class LoginPage extends StatefulWidget {
 
 class __LoginPageState extends State<LoginPage> with ValidationMixins{
 
+  SharedPreferences sharedPreferences;
   bool __isLoading = false;
   final formKey = GlobalKey<FormState>();
   String email = '';
   String password = '';
 
+  
+  checkLoginStatus() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    if(sharedPreferences.getString("token") != null) {
+      Navigator.of(context).pushReplacementNamed('/StatsPage');
+    }
+  }
+
   @override
   Widget build(BuildContext context){
+    checkLoginStatus();
     return Scaffold(
       body : Container(
         decoration: BoxDecoration(
@@ -132,7 +142,7 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
   }
 
   signIn(String email, pass) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences = await SharedPreferences.getInstance();
     Map data = {
       'email': email,
       'password': pass
