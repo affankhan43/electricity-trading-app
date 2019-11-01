@@ -12,7 +12,7 @@ class MainPage extends StatefulWidget {
  
 class _MainPageState extends State<MainPage> {
   UserModel name = new UserModel(0,"","");
-  Future<String> stats;
+  Future<Map> stats;
   SharedPreferences sharedPreferences;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
     new GlobalKey<RefreshIndicatorState>();
@@ -47,7 +47,7 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  Future<String> fetchStats() async {
+  Future<Map> fetchStats() async {
     sharedPreferences = await SharedPreferences.getInstance();
     String auth = "Bearer"+ sharedPreferences.getString("token");
     final response =
@@ -58,7 +58,8 @@ class _MainPageState extends State<MainPage> {
       
     if (response.statusCode == 200) {
       // If server returns an OK response, parse the JSON.
-      return (json.encode(response.body));
+      Map data = json.decode(response.body);
+      return json.decode(json.encode(data['stats']));
     } else if(response.statusCode == 401){
       sharedPreferences.clear();
       sharedPreferences.commit();
@@ -109,17 +110,18 @@ class _MainPageState extends State<MainPage> {
           key: _refreshIndicatorKey,
           onRefresh: _refresh,
           child: ListView(
-            padding: EdgeInsets.only(top:20.0),
+            padding: EdgeInsets.only(top:30.0,bottom: 35.0),
             children:<Widget>[
               Card(
                 color: Colors.transparent,
                 elevation: 0.0,
                 child: InkWell(
                   child: Container(
-                    padding: EdgeInsets.only(top: 15.0, bottom: 15.0, right: 15.0),
+                    padding: EdgeInsets.only(top: 18.0, bottom: 18.0, right: 15.0),
                     decoration: BoxDecoration(
-                        color: Colors.green[300],
-                        borderRadius: BorderRadius.circular(25.0)
+                        color: Colors.green[400],
+                        borderRadius: BorderRadius.circular(25.0),
+                        border: Border.all(color: Colors.blueAccent)
                     ),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -132,13 +134,29 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
               ),
-              FutureBuilder<String>(
+              FutureBuilder<Map>(
                 future: stats,
                 builder: (context, snapshot){
                   if (snapshot.hasData) {
+                    bool voltage = snapshot.data.containsKey("Voltage");
+                    bool mainpower = snapshot.data.containsKey("MainPower");
+                    bool gtpower = snapshot.data.containsKey("GridTiePower");
+                    bool loadpower = snapshot.data.containsKey("LoadPower");
+                    bool maincurrent = snapshot.data.containsKey("MainCurrent");
+                    bool gtcurrent = snapshot.data.containsKey("GridTieCurrent");
+                    bool loadcurrent = snapshot.data.containsKey("LoadCurrent");
+                    bool last_update = snapshot.data.containsKey("LastUpdated");
                     return Container(child:Column(children:<Widget>[
-                      statsList("Status","Disabled"),
-                      Text(snapshot.data)]));
+                      //statsList("Status","Disabled"),
+                      voltage? statsList("Voltage", snapshot.data['Voltage'].toString()):Center(),
+                      mainpower? statsList("Main Power", snapshot.data['MainPower'].toString()):Center(),
+                      gtpower? statsList("GridTie Power", snapshot.data['GridTiePower'].toString()):Center(),
+                      loadpower? statsList("Load Power", snapshot.data['LoadPower'].toString()):Center(),
+                      maincurrent? statsList("Main Current", snapshot.data['MainCurrent'].toString()):Center(),
+                      gtcurrent? statsList("GridTie Current", snapshot.data['GridTieCurrent'].toString()):Center(),
+                      loadcurrent? statsList("LoadCurrent", snapshot.data['LoadCurrent'].toString()):Center(),
+                      last_update? statsList("Last Updated At", snapshot.data['LastUpdated'].toString()):Center(),
+                      ]));
                   } else if (snapshot.hasError) {
                     return Text("${snapshot.error}");
                   }
@@ -201,13 +219,14 @@ class _MainPageState extends State<MainPage> {
           padding: EdgeInsets.only(top: 15.0, bottom: 15.0, right: 15.0),
           decoration: BoxDecoration(
               color: Colors.green[200],
-              borderRadius: BorderRadius.circular(25.0)
+              borderRadius: BorderRadius.circular(25.0),
+              border: Border.all(color: Colors.blueAccent[200])
           ),
           child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                  Text(title+":",style: TextStyle(),),
+                  Text(title+":  ",style: TextStyle(fontSize: 18.0,fontWeight: FontWeight.w600,color: Colors.black38)),
                   Text(value)
               ],
           ),

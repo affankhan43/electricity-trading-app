@@ -1,8 +1,13 @@
 import 'package:flutter/services.dart';
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import '../models/userModel.dart';
+import 'package:http/http.dart' as http;
+import '../models/walletModel.dart';
+import '../models/TxModel.dart';
+import 'txList.dart';
 
 class WalletPage extends StatefulWidget {
   @override
@@ -11,7 +16,10 @@ class WalletPage extends StatefulWidget {
  
 class _WalletPageState extends State<WalletPage> {
   UserModel name = new UserModel(0,"","");
+  WalletModel wallet = new WalletModel("",0,[]);
   SharedPreferences sharedPreferences;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+    new GlobalKey<RefreshIndicatorState>();
   //String name = "";
 
   @override
@@ -23,6 +31,7 @@ class _WalletPageState extends State<WalletPage> {
       name.email = val.email;
       name.id = val.id;
     }));
+    fetchWallet();
   }
   Future<UserModel> getName() async {
     sharedPreferences = await SharedPreferences.getInstance();
@@ -32,11 +41,46 @@ class _WalletPageState extends State<WalletPage> {
     // array['email'] = sharedPreferences.getString("email");
     return data;
   }
+
+  void fetchWallet() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    String auth = "Bearer"+ sharedPreferences.getString("token");
+    final response =
+      await http.post(
+        'http://ec2-3-15-209-246.us-east-2.compute.amazonaws.com/ssuet-electric/public/api/getWallet',
+        headers: {"authorization":auth,"Content-Type": "application/json","Accept": "application/json"}
+      );
+      
+    if (response.statusCode == 200) {
+      // If server returns an OK response, parse the JSON.
+      setState((){
+        wallet = WalletModel.fromJson(json.decode(response.body));
+      });  
+    } else if(response.statusCode == 401){
+      sharedPreferences.clear();
+      sharedPreferences.commit();
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => LoginPage()), (Route<dynamic> route) => false);
+    } else {
+      // If that response was not OK, throw an error.
+      throw Exception('Failed to load post');
+    }
+  }
   checkLoginStatus() async {
     sharedPreferences = await SharedPreferences.getInstance();
     if(sharedPreferences.getString("token") == null) {
       Navigator.of(context).pushReplacementNamed('/LoginScreen');
     }
+  }
+
+  Future<void> _refresh() async{
+    getName().then((val)=>setState((){
+      name.name = val.name;
+      name.email = val.email;
+      name.id = val.id;
+    }));
+    print('refreshing ...');
+    fetchWallet();
+    return null;
   }
 
   @override
@@ -65,20 +109,23 @@ class _WalletPageState extends State<WalletPage> {
             end: Alignment.bottomCenter
           ),
         ),
-        child: ListView(children: <Widget>[
-          _buildHeader(context),
-          cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
-          cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
-          cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
-          cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
-          cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
-          cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
-          cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
-          cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
-          cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
-          cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
-          cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
-        ],)
+        child: RefreshIndicator(
+          key: _refreshIndicatorKey,
+          onRefresh: _refresh,
+          child:ListView(
+            children: <Widget>[
+              _buildHeader(context),
+              TxList(wallet.txs),
+          // cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
+          // cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
+          // cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
+          // cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
+          // cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
+          // cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
+          // cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
+          // cryptoPortfolioItem((Icons.attach_money), "Buy", 20.0, 20.0,"50%"),
+        ],),
+        )
         //child: Center(child: Text(name.name)),
       ),
       drawer: Theme(
@@ -141,7 +188,7 @@ class _WalletPageState extends State<WalletPage> {
                   SizedBox(height: 60.0,),
                   Text("Balance", style: TextStyle(fontSize: 27.0,fontWeight: FontWeight.w700,color: Colors.black87),),
                   SizedBox(height: 5.0,),
-                  Text("6500 PKR", style: TextStyle(fontSize: 19.0,color: Colors.black38),),
+                  Text( wallet.balance.toString()+" PKR", style: TextStyle(fontSize: 19.0,color: Colors.black38),),
                   SizedBox(height: 14.0,),
                   Container(
                     height: 40.0,
@@ -164,6 +211,7 @@ class _WalletPageState extends State<WalletPage> {
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: FloatingActionButton(
                             onPressed: (){
+                              dialogBox("Deposit Address",wallet.address);
                               print("Deposit");
                             },
                             backgroundColor: Colors.green[300],
@@ -259,4 +307,30 @@ class _WalletPageState extends State<WalletPage> {
             ),
           ),
         );
+
+    dialogBox(String type, address){
+      return showDialog(
+        context: context,
+        child: AlertDialog(
+          backgroundColor: Colors.green[600],
+          title: Row(
+            children: <Widget>[
+              Icon(Icons.beenhere),
+              Text(type, style: TextStyle(color:Colors.black38),)
+          ]),
+          content: Text(address, style: TextStyle(color: Colors.black38),),
+        )
+      );
+    }
+
+    Container lister(WalletModel wlt){
+      return Container(
+        child:ListView.builder(
+        itemCount: wlt.txs.length,
+        itemBuilder: (context, int index){
+          return cryptoPortfolioItem((Icons.compare_arrows), wlt.txs[index].tx_type,wlt.txs[index].amount.toDouble() , 0.0,
+            "as");
+        },
+      ));
+    }
 }
