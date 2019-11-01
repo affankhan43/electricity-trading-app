@@ -1,4 +1,4 @@
-# electric
+# Electricity Trading App
 
 A new Flutter project.
 
