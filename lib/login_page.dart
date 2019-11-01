@@ -14,7 +14,9 @@ class LoginPage extends StatefulWidget {
 class __LoginPageState extends State<LoginPage> with ValidationMixins{
 
   bool __isLoading = false;
-  Icon name = Icon(Icons.battery_charging_full);
+  final formKey = GlobalKey<FormState>();
+  String email = '';
+  String password = '';
 
   @override
   Widget build(BuildContext context){
@@ -57,13 +59,16 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.0),
       margin: EdgeInsets.only(top:30),
-      child: Column(
-        children: <Widget>[
-          txtEmail("Email",Icons.email),
-          Container(margin: EdgeInsets.only(top: 15.0),),
-          txtPassword("Password",Icons.lock),
-          Container(margin: EdgeInsets.only(top: 15.0),),
-        ],
+      child: Form(
+          key: formKey,
+          child: Column(
+          children: <Widget>[
+            txtEmail("Email",Icons.email),
+            Container(margin: EdgeInsets.only(top: 15.0),),
+            txtPassword("Password",Icons.lock),
+            Container(margin: EdgeInsets.only(top: 15.0),),
+          ],
+        ),
       ),
     );
   }
@@ -76,10 +81,13 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: FloatingActionButton(
         onPressed: (){
-          setState(() {
-           __isLoading = true; 
-          });
-          signIn(emailController.text,passwordController.text);
+          if(formKey.currentState.validate()){
+            formKey.currentState.save();
+            setState(() {
+              __isLoading = true; 
+            });
+            signIn(emailController.text,passwordController.text);
+          }
         },
         backgroundColor: Colors.green[600],
         shape: RoundedRectangleBorder(
@@ -95,8 +103,11 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
   TextFormField txtEmail(String title, IconData icon){
     return TextFormField(
       controller: emailController,
-      style: TextStyle(color: Colors.white70),
+      style: TextStyle(color: Colors.black38),
       validator: validateEmail,
+      onSaved: (String value){
+        email = value;
+      },
       decoration: InputDecoration(
         hintText: title,
         hintStyle: TextStyle(color: Colors.white70),
@@ -109,7 +120,7 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
     return TextFormField(
       controller: passwordController,
       obscureText: true,
-      style: TextStyle(color: Colors.white70),
+      style: TextStyle(color: Colors.black38),
       validator: validatePassword,
       decoration: InputDecoration(
         hintText: title,
