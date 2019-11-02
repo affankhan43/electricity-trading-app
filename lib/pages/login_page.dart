@@ -39,7 +39,8 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
         end: Alignment.bottomCenter
       )
       ),
-      child: ListView(
+      child: __isLoading ? Center(child: CircularProgressIndicator()) : 
+      ListView(
         children: <Widget>[
         headerSection(),
         textSection(),
@@ -94,7 +95,7 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
           if(formKey.currentState.validate()){
             formKey.currentState.save();
             setState(() {
-              __isLoading = true; 
+              __isLoading = true;
             });
             signIn(emailController.text,passwordController.text);
           }
@@ -199,4 +200,6 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
       )
     );
   }
+
+  
 }
