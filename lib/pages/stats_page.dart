@@ -37,6 +37,7 @@ class _MainPageState extends State<MainPage> {
     checkLoginStatus();
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green[600],
         title: Text("Stats", style: TextStyle(color: Colors.white)),
         actions: <Widget>[
           FlatButton(
@@ -49,29 +50,54 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
-      body: Center(child: Text(name)),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            ListTile(
-              title: Text("Name"),
-              onTap: (){
-                print(sharedPreferences.getString("name"));
-              },
-            ),
-            ListTile(
-              title: Text("Token"),
-              onTap: (){
-                print(sharedPreferences.getString("token"));
-              },
-            ),
-            ListTile(
-              title: Text("Email"),
-              onTap: (){
-                print(sharedPreferences.getString("email"));
-              },
-            )
-          ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.green[600],Colors.white24],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter
+          ),
+        ),
+        child: Center(child: Text(name)),
+      ),
+      drawer: Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: Colors.green[600]
+        ),
+        child: Drawer(
+          child: ListView(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(top:30.0,bottom:30.0),
+                alignment: Alignment(0.0,0.0),
+                child: Text(name,style: TextStyle(fontWeight: FontWeight.w900,fontSize: 20.0)),
+              ),
+              Divider(
+                color:Colors.black38,
+                thickness: 7.0,
+                indent: 7.0,
+                endIndent: 7.0,
+              ),
+              ListTile(
+                title: Text("Name"),
+                onTap: (){
+                  print(sharedPreferences.getString("name"));
+                },
+              ),
+              ListTile(
+                title: Text("Token"),
+                onTap: (){
+                  print(sharedPreferences.getString("token"));
+                },
+              ),
+              ListTile(
+                title: Text("Email"),
+                onTap: (){
+                  print(sharedPreferences.getString("email"));
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
