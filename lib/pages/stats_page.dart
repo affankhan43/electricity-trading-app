@@ -1,14 +1,15 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'login_page.dart';
+import '../models/userModel.dart';
 
 class MainPage extends StatefulWidget {
   @override
   _MainPageState createState() => _MainPageState();
 }
- String name="";
+ 
 class _MainPageState extends State<MainPage> {
-
+  UserModel name = new UserModel(0,"","");
   SharedPreferences sharedPreferences;
   //String name = "";
 
@@ -17,13 +18,18 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     checkLoginStatus();
     getName().then((val)=>setState((){
-      name = val;
+      name.name = val.name;
+      name.email = val.email;
+      name.id = val.id;
     }));
   }
-
-  Future<String> getName() async {
+  Future<UserModel> getName() async {
     sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getString("name");
+    var data = new UserModel(sharedPreferences.getInt("id"), sharedPreferences.getString("name"), sharedPreferences.getString("email"));
+    // Map array;
+    // array['name'] = sharedPreferences.getString("name");
+    // array['email'] = sharedPreferences.getString("email");
+    return data;
   }
   checkLoginStatus() async {
     sharedPreferences = await SharedPreferences.getInstance();
@@ -58,7 +64,7 @@ class _MainPageState extends State<MainPage> {
             end: Alignment.bottomCenter
           ),
         ),
-        child: Center(child: Text(name)),
+        child: Center(child: Text(name.name)),
       ),
       drawer: Theme(
         data: Theme.of(context).copyWith(
@@ -70,7 +76,12 @@ class _MainPageState extends State<MainPage> {
               Container(
                 padding: EdgeInsets.only(top:30.0,bottom:30.0),
                 alignment: Alignment(0.0,0.0),
-                child: Text(name,style: TextStyle(fontWeight: FontWeight.w900,fontSize: 20.0)),
+                child: Column(
+                  children: <Widget>[
+                    Text(name.name,style: TextStyle(fontWeight: FontWeight.w900,fontSize: 20.0)),
+                    Text(name.email,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14.0)),
+                  ],
+                ),
               ),
               Divider(
                 color:Colors.black38,
