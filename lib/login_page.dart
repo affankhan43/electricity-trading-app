@@ -103,6 +103,7 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
   TextFormField txtEmail(String title, IconData icon){
     return TextFormField(
       controller: emailController,
+      keyboardType: TextInputType.emailAddress,
       style: TextStyle(color: Colors.black38),
       validator: validateEmail,
       onSaved: (String value){
@@ -144,7 +145,17 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
         setState(() {
           __isLoading = false;
         });
-        print(json.encode(jsonResponse));
+        if(jsonResponse.containsKey('success')){
+          if(jsonResponse['success'] == true){
+            print("Hurray!!");
+          }
+          else{
+            print(jsonResponse['message']);
+          }
+        }
+        else{
+          print("Not Found");
+        }
         //sharedPreferences.setString("token", jsonResponse['token']);
         //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => MainPage()), (Route<dynamic> route) => false);
       }
