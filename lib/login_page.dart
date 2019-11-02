@@ -151,6 +151,7 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
           }
           else{
             print(jsonResponse['message']);
+            dialogBox('Login Failed',jsonResponse['message']);
           }
         }
         else{
@@ -168,4 +169,14 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
     }
   }
 
+  dialogBox(String type, msg){
+    return showDialog(
+      context: context,
+      child: AlertDialog(
+        backgroundColor: Colors.green[600],
+        title: Text(type, style: TextStyle(color: Colors.black38),),
+        content: Text(msg, style: TextStyle(color: Colors.black38),),
+      )
+    );
+  }
 }
