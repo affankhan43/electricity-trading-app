@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 
 
@@ -11,13 +12,19 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final int splashDuration = 2;
+  SharedPreferences sharedPrefernces;
 
   startTime() async {
+    sharedPrefernces = await SharedPreferences.getInstance();
     return Timer(
-        Duration(seconds: splashDuration),
-            () {
-          SystemChannels.textInput.invokeMethod('TextInput.hide');
+      Duration(seconds: splashDuration),
+      () {
+        SystemChannels.textInput.invokeMethod('TextInput.hide');
+        if(sharedPrefernces.getString("token") == null) {
           Navigator.of(context).pushReplacementNamed('/LoginScreen');
+        }else{
+          Navigator.of(context).pushReplacementNamed('/StatsPage');
+        }
         }
     );
   }

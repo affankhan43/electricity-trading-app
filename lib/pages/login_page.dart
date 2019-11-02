@@ -162,7 +162,7 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
             sharedPreferences.setString("email", jsonResponse['email']);
             sharedPreferences.setString("token", jsonResponse['token']);
             sharedPreferences.commit();
-            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => MainPage()), (Route<dynamic> route) => false);
+            Navigator.of(context).pushReplacementNamed('/LoginScreen');
             print("Hurray!!");
           }
           else{

@@ -6,18 +6,29 @@ class MainPage extends StatefulWidget {
   @override
   _MainPageState createState() => _MainPageState();
 }
-
+ String name="";
 class _MainPageState extends State<MainPage> {
 
   SharedPreferences sharedPreferences;
-  String name = "";
+  //String name = "";
 
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+    getName().then((val)=>setState((){
+      name = val;
+    }));
+  }
+
+  Future<String> getName() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    return sharedPreferences.getString("name");
+  }
   checkLoginStatus() async {
     sharedPreferences = await SharedPreferences.getInstance();
     if(sharedPreferences.getString("token") == null) {
       Navigator.of(context).pushReplacementNamed('/LoginScreen');
-    }else{
-      name = sharedPreferences.getString("token");
     }
   }
 
@@ -26,7 +37,7 @@ class _MainPageState extends State<MainPage> {
     checkLoginStatus();
     return Scaffold(
       appBar: AppBar(
-        title: Text("Code Land", style: TextStyle(color: Colors.white)),
+        title: Text("Stats", style: TextStyle(color: Colors.white)),
         actions: <Widget>[
           FlatButton(
             onPressed: () {
@@ -39,7 +50,30 @@ class _MainPageState extends State<MainPage> {
         ],
       ),
       body: Center(child: Text(name)),
-      drawer: Drawer(),
+      drawer: Drawer(
+        child: ListView(
+          children: <Widget>[
+            ListTile(
+              title: Text("Name"),
+              onTap: (){
+                print(sharedPreferences.getString("name"));
+              },
+            ),
+            ListTile(
+              title: Text("Token"),
+              onTap: (){
+                print(sharedPreferences.getString("token"));
+              },
+            ),
+            ListTile(
+              title: Text("Email"),
+              onTap: (){
+                print(sharedPreferences.getString("email"));
+              },
+            )
+          ],
+        ),
+      ),
     );
   }
 }
