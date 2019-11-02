@@ -137,15 +137,16 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
       'password': pass
     };
     var jsonResponse = null;
-    var response = await http.post("http://localhost:8000/login", body: data);
+    var response = await http.post("http://192.168.0.105/ssuet-electric/public/api/login", body: data);
     if(response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
       if(jsonResponse != null) {
         setState(() {
           __isLoading = false;
         });
-        sharedPreferences.setString("token", jsonResponse['token']);
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => MainPage()), (Route<dynamic> route) => false);
+        print(json.encode(jsonResponse));
+        //sharedPreferences.setString("token", jsonResponse['token']);
+        //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => MainPage()), (Route<dynamic> route) => false);
       }
     }
     else {
