@@ -149,7 +149,7 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
       'password': pass
     };
     var jsonResponse = null;
-    var response = await http.post("http://192.168.0.105/ssuet-electric/public/api/login", body: data);
+    var response = await http.post("http://ec2-3-15-209-246.us-east-2.compute.amazonaws.com/ssuet-electric/public/api/login", body: data);
     if(response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
       if(jsonResponse != null) {
