@@ -174,7 +174,11 @@ class __LoginPageState extends State<LoginPage> with ValidationMixins{
       context: context,
       child: AlertDialog(
         backgroundColor: Colors.green[600],
-        title: Text(type, style: TextStyle(color: Colors.black38),),
+        title: Row(
+          children: <Widget>[
+            Icon(Icons.error),
+            Text(type, style: TextStyle(color:Colors.black38),)
+        ]),
         content: Text(msg, style: TextStyle(color: Colors.black38),),
       )
     );
