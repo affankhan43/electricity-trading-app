@@ -154,36 +154,32 @@ class _WalletPageState extends State<WalletPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Expanded(
-                          child: ListTile(
-                            title: Text("302",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontWeight: FontWeight.bold),),
-                            subtitle: Text("Posts".toUpperCase(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 12.0) ),
+                        // Expanded(
+                        //   child: ListTile(
+                        //     title: Text("302",
+                        //       textAlign: TextAlign.center,
+                        //       style: TextStyle(fontWeight: FontWeight.bold),),
+                        //     subtitle: Text("Posts".toUpperCase(),
+                        //       textAlign: TextAlign.center,
+                        //       style: TextStyle(fontSize: 12.0) ),
+                        //   ),
+                        // ),
+                        Container(
+                          width: 180.0,
+                          height: 35.0,
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: FloatingActionButton(
+                            onPressed: (){
+                              print("Deposit");
+                            },
+                            backgroundColor: Colors.green[300],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0)
+                            ),
+                            child: Text("Deposit",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16.0),),
                           ),
                         ),
-                        Expanded(
-                          child: ListTile(
-                            title: Text("10.3K",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontWeight: FontWeight.bold),),
-                            subtitle: Text("Followers".toUpperCase(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 12.0) ),
-                          ),
-                        ),
-                        Expanded(
-                          child: ListTile(
-                            title: Text("120",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontWeight: FontWeight.bold),),
-                            subtitle: Text("Following".toUpperCase(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 12.0) ),
-                          ),
-                        ),
+                        
                       ],
                     ),
                   )
@@ -212,14 +208,15 @@ class _WalletPageState extends State<WalletPage> {
   cryptoPortfolioItem(IconData icon, String name, double amount, double rate,
             String percentage) =>
         Card(
-          elevation: 1.0,
+          color: Colors.transparent,
+          elevation: 0.0,
           child: InkWell(
             onTap: () => print("tapped"),
             child: Container(
               padding: EdgeInsets.only(top: 15.0, bottom: 15.0, right: 15.0),
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(22.0)),
+                  color: Colors.green[200],
+                  borderRadius: BorderRadius.circular(25.0)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
