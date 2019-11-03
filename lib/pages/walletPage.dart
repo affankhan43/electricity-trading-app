@@ -44,7 +44,7 @@ class _WalletPageState extends State<WalletPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green[600],
-        title: Text("Stats", style: TextStyle(color: Colors.white)),
+        title: Text("Wallet", style: TextStyle(color: Colors.white)),
         actions: <Widget>[
           FlatButton(
             onPressed: () {
@@ -90,9 +90,9 @@ class _WalletPageState extends State<WalletPage> {
                 endIndent: 7.0,
               ),
               ListTile(
-                title: Text("Name"),
+                title: Text("Stats"),
                 onTap: (){
-                  print(sharedPreferences.getString("name"));
+                  Navigator.of(context).pushNamed('/StatsPage');
                 },
               ),
               ListTile(

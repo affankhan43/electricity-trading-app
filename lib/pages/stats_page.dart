@@ -90,6 +90,12 @@ class _MainPageState extends State<MainPage> {
                 endIndent: 7.0,
               ),
               ListTile(
+                title: Text("Wallet"),
+                onTap: (){
+                  Navigator.of(context).pushNamed('/WalletPage');
+                },
+              ),
+              ListTile(
                 title: Text("Name"),
                 onTap: (){
                   print(sharedPreferences.getString("name"));
