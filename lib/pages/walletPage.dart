@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'login_page.dart';
@@ -64,7 +65,8 @@ class _WalletPageState extends State<WalletPage> {
             end: Alignment.bottomCenter
           ),
         ),
-        child: Center(child: Text(name.name)),
+        child: _buildHeader(context),
+        //child: Center(child: Text(name.name)),
       ),
       drawer: Theme(
         data: Theme.of(context).copyWith(
@@ -110,6 +112,86 @@ class _WalletPageState extends State<WalletPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Container _buildHeader(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 30.0),
+      height: 230.0,
+      child: Stack(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(top: 30.0, left: 25.0, right: 25.0, bottom: 10.0),
+            child: Material(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
+              elevation: 5.0,
+              color: Colors.white,
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 60.0,),
+                  Text("Balance", style: TextStyle(fontSize: 27.0,fontWeight: FontWeight.w700,color: Colors.black87),),
+                  SizedBox(height: 5.0,),
+                  Text("6500 PKR", style: TextStyle(fontSize: 19.0,color: Colors.black38),),
+                  SizedBox(height: 14.0,),
+                  Container(
+                    height: 40.0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded(
+                          child: ListTile(
+                            title: Text("302",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontWeight: FontWeight.bold),),
+                            subtitle: Text("Posts".toUpperCase(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 12.0) ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListTile(
+                            title: Text("10.3K",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontWeight: FontWeight.bold),),
+                            subtitle: Text("Followers".toUpperCase(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 12.0) ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListTile(
+                            title: Text("120",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontWeight: FontWeight.bold),),
+                            subtitle: Text("Following".toUpperCase(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 12.0) ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Material(
+                elevation: 5.0,
+                shape: CircleBorder(),
+                child: CircleAvatar(
+                  radius: 40.0,
+                  backgroundColor: Colors.green[600],
+                  backgroundImage: AssetImage('images/wallet.png'),),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
