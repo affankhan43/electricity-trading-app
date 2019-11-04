@@ -14,11 +14,15 @@ class _MainPageState extends State<MainPage> {
   UserModel name = new UserModel(0,"","");
   Future<String> stats;
   SharedPreferences sharedPreferences;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+    new GlobalKey<RefreshIndicatorState>();
   //String name = "";
 
   @override
   void initState() {
     super.initState();
+    // WidgetsBinding.instance
+    //   .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
     checkLoginStatus();
     getName().then((val)=>setState((){
       name.name = val.name;
@@ -55,11 +59,25 @@ class _MainPageState extends State<MainPage> {
     if (response.statusCode == 200) {
       // If server returns an OK response, parse the JSON.
       return (json.encode(response.body));
+    } else if(response.statusCode == 401){
+      sharedPreferences.clear();
+      sharedPreferences.commit();
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => LoginPage()), (Route<dynamic> route) => false);
     } else {
       // If that response was not OK, throw an error.
       throw Exception('Failed to load post');
     }
 }
+  Future<void> _refresh() async{
+    getName().then((val)=>setState((){
+      name.name = val.name;
+      name.email = val.email;
+      name.id = val.id;
+    }));
+    print('refreshing stocks...');
+    stats =  fetchStats();
+    return null;
+  }
 
   @override
   Widget build(BuildContext context){
@@ -79,6 +97,7 @@ class _MainPageState extends State<MainPage> {
         ],
       ),
       body: Container(
+        child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [Colors.green[600],Colors.white24],
@@ -86,16 +105,49 @@ class _MainPageState extends State<MainPage> {
             end: Alignment.bottomCenter
           ),
         ),
-        child: FutureBuilder<String>(
-          future: stats,
-          builder: (context, snapshot){
-            if (snapshot.hasData) {
-              return Text(snapshot.data);
-            } else if (snapshot.hasError) {
-              return Text("${snapshot.error}");
-            }
-            return CircularProgressIndicator();
-          },
+        child: new RefreshIndicator(
+          key: _refreshIndicatorKey,
+          onRefresh: _refresh,
+          child: ListView(
+            padding: EdgeInsets.only(top:20.0),
+            children:<Widget>[
+              Card(
+                color: Colors.transparent,
+                elevation: 0.0,
+                child: InkWell(
+                  child: Container(
+                    padding: EdgeInsets.only(top: 15.0, bottom: 15.0, right: 15.0),
+                    decoration: BoxDecoration(
+                        color: Colors.green[300],
+                        borderRadius: BorderRadius.circular(25.0)
+                    ),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                            Icon(Icons.assessment, color: Colors.black38,size: 23.0,),
+                            Text("Stats",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 23.0,color: Colors.black38),),
+                        ],
+                    ),
+                  ),
+                ),
+              ),
+              FutureBuilder<String>(
+                future: stats,
+                builder: (context, snapshot){
+                  if (snapshot.hasData) {
+                    return Container(child:Column(children:<Widget>[
+                      statsList("Status","Disabled"),
+                      Text(snapshot.data)]));
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+                  return Center(child:CircularProgressIndicator(),);
+            },
+            ),
+            ],
+          ),
+          ),
         ),
       ),
       drawer: Theme(
@@ -151,4 +203,27 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
+
+  statsList(String title,String value)=>
+    Card(
+      color: Colors.transparent,
+      elevation: 0.0,
+      child: InkWell(
+        child: Container(
+          padding: EdgeInsets.only(top: 15.0, bottom: 15.0, right: 15.0),
+          decoration: BoxDecoration(
+              color: Colors.green[200],
+              borderRadius: BorderRadius.circular(25.0)
+          ),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                  Text(title+":",style: TextStyle(),),
+                  Text(value)
+              ],
+          ),
+        ),
+      ),
+    );
 }
