@@ -2,6 +2,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import '../models/userModel.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class MainPage extends StatefulWidget {
   @override
@@ -10,6 +12,7 @@ class MainPage extends StatefulWidget {
  
 class _MainPageState extends State<MainPage> {
   UserModel name = new UserModel(0,"","");
+  Future<String> stats;
   SharedPreferences sharedPreferences;
   //String name = "";
 
@@ -22,6 +25,7 @@ class _MainPageState extends State<MainPage> {
       name.email = val.email;
       name.id = val.id;
     }));
+    stats =  fetchStats();
   }
   Future<UserModel> getName() async {
     sharedPreferences = await SharedPreferences.getInstance();
@@ -31,6 +35,7 @@ class _MainPageState extends State<MainPage> {
     // array['email'] = sharedPreferences.getString("email");
     return data;
   }
+  
   checkLoginStatus() async {
     sharedPreferences = await SharedPreferences.getInstance();
     if(sharedPreferences.getString("token") == null) {
@@ -38,9 +43,26 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  Future<String> fetchStats() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    String auth = "Bearer"+ sharedPreferences.getString("token");
+    final response =
+      await http.post(
+        'http://ec2-3-15-209-246.us-east-2.compute.amazonaws.com/ssuet-electric/public/api/getStats',
+        headers: {"authorization":auth,"Content-Type": "application/json","Accept": "application/json"}
+      );
+      
+    if (response.statusCode == 200) {
+      // If server returns an OK response, parse the JSON.
+      return (json.encode(response.body));
+    } else {
+      // If that response was not OK, throw an error.
+      throw Exception('Failed to load post');
+    }
+}
+
   @override
   Widget build(BuildContext context){
-    checkLoginStatus();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green[600],
@@ -64,7 +86,17 @@ class _MainPageState extends State<MainPage> {
             end: Alignment.bottomCenter
           ),
         ),
-        child: Center(child: Text(name.name)),
+        child: FutureBuilder<String>(
+          future: stats,
+          builder: (context, snapshot){
+            if (snapshot.hasData) {
+              return Text(snapshot.data);
+            } else if (snapshot.hasError) {
+              return Text("${snapshot.error}");
+            }
+            return CircularProgressIndicator();
+          },
+        ),
       ),
       drawer: Theme(
         data: Theme.of(context).copyWith(
