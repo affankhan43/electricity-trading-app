@@ -180,7 +180,7 @@ class _MainPageState extends State<MainPage> {
                 },
               ),
               ListTile(
-                title: Text("Trading"),
+                title: Text("Trade Settings"),
                 onTap: (){
                   Navigator.of(context).pushNamed('/TradePage');
                 },

@@ -3,6 +3,7 @@ import 'pages/login_page.dart';
 import 'pages/stats_page.dart';
 import 'pages/splashScreen.dart';
 import 'pages/walletPage.dart';
+import 'pages/trade_page.dart';
 
 
 void main() => runApp(MyApp());
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         "/LoginScreen": (BuildContext context) => LoginPage(),
         "/StatsPage"  : (BuildContext context) => MainPage(),
         "/WalletPage"  : (BuildContext context) => WalletPage(),
-        "/TradePage"  : (BuildContext context) => WalletPage(),
+        "/TradePage"  : (BuildContext context) => TradePage(),
       },
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),

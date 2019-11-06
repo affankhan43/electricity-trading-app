@@ -13,4 +13,14 @@ class ValidationMixins {
     }
     return null;
   }
+
+  String validateRate (String value){
+    if(value == null){
+      return 'Please fill the desired Rate';
+    }else if(int.parse(value) == null){
+      print(value);
+      return 'Rate Value Must Be Numeric';
+    }
+    return null;
+  }
 }
