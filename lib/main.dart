@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
         "/LoginScreen": (BuildContext context) => LoginPage(),
         "/StatsPage"  : (BuildContext context) => MainPage(),
         "/WalletPage"  : (BuildContext context) => WalletPage(),
+        "/TradePage"  : (BuildContext context) => WalletPage(),
       },
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),

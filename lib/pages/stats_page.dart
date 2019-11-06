@@ -180,23 +180,11 @@ class _MainPageState extends State<MainPage> {
                 },
               ),
               ListTile(
-                title: Text("Name"),
+                title: Text("Trading"),
                 onTap: (){
-                  print(sharedPreferences.getString("name"));
+                  Navigator.of(context).pushNamed('/TradePage');
                 },
               ),
-              ListTile(
-                title: Text("Token"),
-                onTap: (){
-                  print(sharedPreferences.getString("token"));
-                },
-              ),
-              ListTile(
-                title: Text("Email"),
-                onTap: (){
-                  print(sharedPreferences.getString("email"));
-                },
-              )
             ],
           ),
         ),

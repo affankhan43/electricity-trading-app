@@ -111,15 +111,9 @@ class _WalletPageState extends State<WalletPage> {
                 },
               ),
               ListTile(
-                title: Text("Token"),
+                title: Text("Trade Settings"),
                 onTap: (){
-                  print(sharedPreferences.getString("token"));
-                },
-              ),
-              ListTile(
-                title: Text("Email"),
-                onTap: (){
-                  print(sharedPreferences.getString("email"));
+                  Navigator.of(context).pushNamed('/TradePage');
                 },
               )
             ],
